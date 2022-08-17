@@ -1,0 +1,8 @@
+﻿  Renderer.cpp
+C:\Users\Dustin\Documents\School\CGO\Lab2_Retry\GraphicsEngine\Renderer.cpp(90,22): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Users\Dustin\Documents\School\CGO\Lab2_Retry\GraphicsEngine\Renderer.cpp(97,24): warning C4244: 'argument': conversion from 'double' to 'uint32_t', possible loss of data
+C:\Users\Dustin\Documents\School\CGO\Lab2_Retry\GraphicsEngine\Renderer.cpp(97,21): warning C4244: 'argument': conversion from 'double' to 'uint32_t', possible loss of data
+C:\Users\Dustin\Documents\School\CGO\Lab2_Retry\GraphicsEngine\Renderer.cpp(103,22): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Users\Dustin\Documents\School\CGO\Lab2_Retry\GraphicsEngine\Renderer.cpp(110,24): warning C4244: 'argument': conversion from 'double' to 'uint32_t', possible loss of data
+C:\Users\Dustin\Documents\School\CGO\Lab2_Retry\GraphicsEngine\Renderer.cpp(110,21): warning C4244: 'argument': conversion from 'double' to 'uint32_t', possible loss of data
+  GraphicsEngine.vcxproj -> C:\Users\Dustin\Documents\School\CGO\Lab2_Retry\GraphicsEngine\x64\Debug\GraphicsEngine.exe
