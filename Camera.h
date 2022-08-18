@@ -38,7 +38,7 @@ public:
 	/** Projects a 3d point onto a 2d screen. */
 	//Vector2 ProjectOntoScreen(const Vector3& P, const Matrix4X4& PTransform = Matrix4X4{}) const;
 
-	Vector2 ProjectOntoScreen2(const Vector3& P, const Matrix4X4& PTransform = Matrix4X4{}) const;
+	Vector2 ProjectOntoScreen(const Vector3& P, const Matrix4X4& PTransform = Matrix4X4{}) const;
 
 	/** Calculates the current perspective project matrix. */
 	Matrix4X4 GetPerspectiveProjection() const;

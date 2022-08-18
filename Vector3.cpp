@@ -95,5 +95,5 @@ Vector3& Vector3::Rotate(const Matrix4X4& Other) {
 }
 
 std::string Vector3::ToString() const {
-	return Stringf("Vector2 {[X: %f, Y: %f, Z: %f] Homogenous: %f}", GetX(), GetY(), GetZ(), GetW());
+	return StringFormat("Vector2 {[X: %f, Y: %f, Z: %f] Homogenous: %f}", GetX(), GetY(), GetZ(), GetW());
 }

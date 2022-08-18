@@ -90,7 +90,7 @@ Vector2& Vector2::Scale(const Vector2& Other) {
 }
 
 std::string Vector2::ToString() const {
-	return Stringf("Vector2 {[X: %f, Y: %f] Homogenous: %f}", GetX(), GetY(), GetZ());
+	return StringFormat("Vector2 {[X: %f, Y: %f] Homogenous: %f}", GetX(), GetY(), GetZ());
 }
 
 bool operator==(const Vector2& Lhs, const Vector2& Rhs) {

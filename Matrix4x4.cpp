@@ -5,6 +5,7 @@
 
 #include "DebugHelper.h"
 #include "MathDefines.h"
+#include "MathHelper.h"
 
 Matrix4X4::Matrix4X4() : M{} {
 	// copy the identity matrix into this new matrix.
@@ -128,9 +129,9 @@ Matrix4X4& Matrix4X4::Scale(const Vector3& Scale) {
 Matrix4X4& Matrix4X4::Rotate(const Vector3& Rotation) {
 	// Rotation at this point is in degrees not radians.
 	// Compose the rotation matrices in order of Z, Y, X to get to the final rotation of this matrix.
-	*this *= GetRotationZ(DEG2_RAD(Rotation.GetZ()));
-	*this *= GetRotationY(DEG2_RAD(Rotation.GetY()));
-	*this *= GetRotationX(DEG2_RAD(Rotation.GetX()));
+	*this *= GetRotationZ(MathHelper::Deg2Rad(Rotation.GetZ()));
+	*this *= GetRotationY(MathHelper::Deg2Rad(Rotation.GetY()));
+	*this *= GetRotationX(MathHelper::Deg2Rad(Rotation.GetX()));
 
 	return *this;
 }
@@ -161,11 +162,9 @@ Matrix4X4& Matrix4X4::SetScale(const Vector3& Scale) {
 
 Matrix4X4 Matrix4X4::Transpose() const {
 	Matrix4X4 m = *this;
-	// Flip rows and cols.
-	float tmp = 0.0;
 
 	// Do nothing for identity coordinates. Interchange the outsides, and then come in to finish.
-	tmp = m[1];
+	float tmp = m[1];
 	m[1] = m[4];
 	m[4] = tmp;
 
@@ -210,17 +209,17 @@ Matrix4X4 Matrix4X4::Inverse() const {
 
 	const float determinant = this->M[0] * tmp[0] + this->M[1] * tmp[1] + this->M[2] * tmp[2] + this->M[3] * tmp[
 		3];
-	if (determinant == 0.0) { result = Matrix4X4{}.LoadIdentity(); }
+	if (determinant == 0.0f) { result = Matrix4X4{}.LoadIdentity(); }
 	else {
-		const float inv_det = 1.0 / determinant;
-		tmp[0] *= inv_det;
-		tmp[1] *= inv_det;
-		tmp[2] *= inv_det;
-		tmp[3] *= inv_det;
-		tmp[4] = -(this->M[1] * d34 - this->M[2] * d24 + this->M[3] * d23) * inv_det;
-		tmp[5] = (this->M[0] * d34 + this->M[2] * d41 + this->M[3] * d13) * inv_det;
-		tmp[6] = -(this->M[0] * d24 + this->M[1] * d41 + this->M[3] * d12) * inv_det;
-		tmp[7] = (this->M[0] * d23 - this->M[1] * d13 + this->M[2] * d12) * inv_det;
+		const float invDet = 1.0f / determinant;
+		tmp[0] *= invDet;
+		tmp[1] *= invDet;
+		tmp[2] *= invDet;
+		tmp[3] *= invDet;
+		tmp[4] = -(this->M[1] * d34 - this->M[2] * d24 + this->M[3] * d23) * invDet;
+		tmp[5] = (this->M[0] * d34 + this->M[2] * d41 + this->M[3] * d13) * invDet;
+		tmp[6] = -(this->M[0] * d24 + this->M[1] * d41 + this->M[3] * d12) * invDet;
+		tmp[7] = (this->M[0] * d23 - this->M[1] * d13 + this->M[2] * d12) * invDet;
 
 		d12 = this->M[0] * this->M[5] - this->M[4] * this->M[1];
 		d13 = this->M[0] * this->M[6] - this->M[4] * this->M[2];
@@ -229,14 +228,14 @@ Matrix4X4 Matrix4X4::Inverse() const {
 		d34 = this->M[2] * this->M[7] - this->M[6] * this->M[3];
 		d41 = this->M[3] * this->M[4] - this->M[7] * this->M[0];
 
-		tmp[8] = (this->M[13] * d34 - this->M[14] * d24 + this->M[15] * d23) * inv_det;
-		tmp[9] = -(this->M[12] * d34 + this->M[14] * d41 + this->M[15] * d13) * inv_det;
-		tmp[10] = (this->M[12] * d24 + this->M[13] * d41 + this->M[15] * d12) * inv_det;
-		tmp[11] = -(this->M[12] * d23 - this->M[13] * d13 + this->M[14] * d12) * inv_det;
-		tmp[12] = -(this->M[9] * d34 - this->M[10] * d24 + this->M[11] * d23) * inv_det;
-		tmp[13] = (this->M[8] * d34 + this->M[10] * d41 + this->M[11] * d13) * inv_det;
-		tmp[14] = -(this->M[8] * d24 + this->M[9] * d41 + this->M[11] * d12) * inv_det;
-		tmp[15] = (this->M[8] * d23 - this->M[9] * d13 + this->M[10] * d12) * inv_det;
+		tmp[8] = (this->M[13] * d34 - this->M[14] * d24 + this->M[15] * d23) * invDet;
+		tmp[9] = -(this->M[12] * d34 + this->M[14] * d41 + this->M[15] * d13) * invDet;
+		tmp[10] = (this->M[12] * d24 + this->M[13] * d41 + this->M[15] * d12) * invDet;
+		tmp[11] = -(this->M[12] * d23 - this->M[13] * d13 + this->M[14] * d12) * invDet;
+		tmp[12] = -(this->M[9] * d34 - this->M[10] * d24 + this->M[11] * d23) * invDet;
+		tmp[13] = (this->M[8] * d34 + this->M[10] * d41 + this->M[11] * d13) * invDet;
+		tmp[14] = -(this->M[8] * d24 + this->M[9] * d41 + this->M[11] * d12) * invDet;
+		tmp[15] = (this->M[8] * d23 - this->M[9] * d13 + this->M[10] * d12) * invDet;
 		memcpy(result.M, tmp, 16 * sizeof(float));
 	}
 

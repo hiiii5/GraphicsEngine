@@ -5,6 +5,7 @@
 #include "MathDefines.h"
 #include "MathHelper.h"
 #include "Camera.h"
+#include "Color.h"
 #include "Vector2.h"
 #include "Vector3.h"
 
@@ -22,7 +23,7 @@ Renderer::Renderer(const uint32_t Width, const uint32_t Height, const uint32_t C
 	memcpy(OldPixels, Pixels, size);
 }
 
-Renderer::~Renderer() { delete[] Pixels; delete[] OldPixels; /*delete CurrentVertexProgram;*/ }
+Renderer::~Renderer() { delete[] Pixels; delete[] OldPixels; delete CurrentVertexProgram; delete CurrentPixelShaderProgram; }
 
 void Renderer::ClearBuffer() const {
 	for (uint32_t i = 0; i < GetScreenSize() * sizeof Pixels; i++) { Pixels[i] = ClearColor; }
@@ -31,35 +32,22 @@ void Renderer::ClearBuffer() const {
 void Renderer::DrawPixel(const uint32_t& Pixel, const uint32_t X, const uint32_t Y) const {
 	if (X >= Width || Y >= Height) return;
 
-	// BlEnd the old pixel with the new pixel.
-	const unsigned short foregroundAlpha = ((Pixel & 0xFF000000) >> 24) / 255;
-
+	auto foreground = Color(Pixel);
 	auto& target = Pixels[Y * Width + X];
+	const auto background = Color(target);
 
-	if (foregroundAlpha <= 0) {
+	if(CurrentPixelShaderProgram) {
+		PixelShader::Execute(CurrentPixelShaderProgram->ShaderFunction, foreground);
+	}
+
+	if (foreground.A <= 0) {
 		target ^= ClearColor;
 		return;
 	}
 
-	const uint32_t foregroundRed = (Pixel & 0x00FF0000) >> 16;
-	const uint32_t foregroundGreen = (Pixel & 0x0000FF00) >> 8;
-	const uint32_t foregroundBlue = (Pixel & 0x000000FF);
+	const auto result = Color::AlphaBlend(foreground, background);
 
-	// Get the old pixels rgb values and average the alphas.
-	const uint32_t backgroundRed = (target & 0x00FF0000) >> 16;
-	const uint32_t backgroundGreen = (target & 0x0000FF00) >> 8;
-	const uint32_t backgroundBlue = (target & 0x000000FF);
-
-	const auto outputRed = (foregroundRed * foregroundAlpha) + (backgroundRed * (1.0 - foregroundAlpha));
-	const auto outputGreen = (foregroundGreen * foregroundAlpha) + (backgroundGreen * (1.0 - foregroundAlpha));
-	const auto outputBlue = (foregroundBlue * foregroundAlpha) + (backgroundBlue * (1.0 - foregroundAlpha));
-
-	const uint32_t red = MathHelper::Floor(outputRed) << 16;
-	const uint32_t green = MathHelper::Floor(outputGreen) << 8;
-	const uint32_t blue = MathHelper::Floor(outputBlue);
-
-	target = foregroundAlpha << 24 | red | green | blue;
-
+	target = result.GetColor();
 }
 
 void Renderer::DrawLine(const Vector2& Start, const Vector2& End, const uint32_t Color) const {
@@ -126,7 +114,7 @@ void Renderer::DrawGrid(const Camera* Viewer, const int WidthDivisions, const in
 	for (j = -GridHeight; j <= GridHeight; j += deltaX) {
 		const auto a = Vector3{j, 0, -GridWidth };
 		const auto b = Vector3{j, 0, GridWidth};
-		DrawLine(Viewer->ProjectOntoScreen2(a), Viewer->ProjectOntoScreen2(b), Color);
+		DrawLine(Viewer->ProjectOntoScreen(a), Viewer->ProjectOntoScreen(b), Color);
 	}
 
 	// Draw y lines
@@ -134,7 +122,7 @@ void Renderer::DrawGrid(const Camera* Viewer, const int WidthDivisions, const in
 	for (j = -GridHeight; j <= GridHeight; j += deltaY) {
 		const auto a = Vector3{-GridWidth, 0, j};
 		const auto b = Vector3{GridWidth, 0, j};
-		DrawLine(Viewer->ProjectOntoScreen2(a), Viewer->ProjectOntoScreen2(b), Color);
+		DrawLine(Viewer->ProjectOntoScreen(a), Viewer->ProjectOntoScreen(b), Color);
 	}
 }
 
@@ -143,9 +131,9 @@ void Renderer::DrawUnitAxis(const Camera* C, const float AxisLength) const {
 	const auto y2 = Vector3::YVector3() * AxisLength;
 	const auto z2 = Vector3::ZVector3() * AxisLength;
 
-	DrawLine(C->ProjectOntoScreen2(Vector3::ZeroVector3()), C->ProjectOntoScreen2(x2), 0xFFAA0000);
-	DrawLine(C->ProjectOntoScreen2(Vector3::ZeroVector3()), C->ProjectOntoScreen2(y2), 0xFF00AA00);
-	DrawLine(C->ProjectOntoScreen2(Vector3::ZeroVector3()), C->ProjectOntoScreen2(z2), 0xFF0000AA);
+	DrawLine(C->ProjectOntoScreen(Vector3::ZeroVector3()), C->ProjectOntoScreen(x2), 0xFFAA0000);
+	DrawLine(C->ProjectOntoScreen(Vector3::ZeroVector3()), C->ProjectOntoScreen(y2), 0xFF00AA00);
+	DrawLine(C->ProjectOntoScreen(Vector3::ZeroVector3()), C->ProjectOntoScreen(z2), 0xFF0000AA);
 }
 
 void Renderer::DrawWireCube(const Camera* C, const Matrix4X4& Transform, const float Scale,const uint32_t& Color) const {
@@ -173,7 +161,7 @@ void Renderer::DrawWireCube(const Camera* C, const Matrix4X4& Transform, const f
 
 	Vector2 projectedPoints[8];
 	for (int i = 0; i < 8; ++i) {
-		projectedPoints[i] = C->ProjectOntoScreen2(points[i], Transform);
+		projectedPoints[i] = C->ProjectOntoScreen(points[i], Transform);
 	}
 
 	for (int i = 0; i < 4; ++i) {
@@ -189,5 +177,13 @@ void Renderer::DrawWireCube(const Camera* C, const Matrix4X4& Transform, const f
 //}
 
 void Renderer::UpdateFrame() const { memcpy(OldPixels, Pixels, GetScreenSize() * sizeof Pixels); }
+void Renderer::SetVertexShader(VertexShader* NewVertexShader) {
+	CurrentVertexProgram = NewVertexShader;
+}
+
+void Renderer::SetPixelShader(PixelShader* Shader) {
+	delete CurrentPixelShaderProgram;
+	CurrentPixelShaderProgram = Shader;
+}
 
 uint32_t* Renderer::GetFrame() const { return OldPixels; }

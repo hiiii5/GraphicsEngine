@@ -3,6 +3,10 @@
 #include "Vector2.h"
 #include "MathDefines.h"
 
+float MathHelper::Deg2Rad(const float Degree) {
+	return Degree * (static_cast<float>(PI) / 180.0f);
+}
+
 Vector2 MathHelper::GetParallelVec(const Vector2& A, const Vector2& B) {
 	return {B.GetX() - A.GetX(), B.GetY() - A.GetY()};
 }
@@ -20,6 +24,7 @@ float MathHelper::LerpF(const float& A, const float& B, const float Ratio) {
 }
 
 uint32_t MathHelper::Floor(const float A) { return static_cast<uint32_t>(A); }
+uint32_t MathHelper::Floor(const double A) { return static_cast<uint32_t>(A); }
 
 float MathHelper::SolveLine(const float& CurX, const Vector2& P1, const Vector2& P2) {
 	const float a = P1.GetY() - P2.GetY();
@@ -62,31 +67,6 @@ void MathHelper::GetMinAndMaxY(Vector2& Min, Vector2& Max, const Vector2& Start,
 		Max = End;
 	}
 }
-//
-//Vector2 MathHelper::get_screen_coord(const vec4& a, const mat_4x4& transform, const mat_4x4& view_matrix,
-//									 const mat_4x4& perspective_matrix, const uint32_t screen_width,
-//									 const uint32_t screen_height) {
-//	auto tmp = a;
-//
-//	// Create the ModelViewPerspective matrix
-//	const auto m = perspective_matrix * view_matrix * transform;
-//
-//	// Transform the vertex to clip space.
-//	tmp = m * tmp;
-//
-//	// Perform the perspective divide to get NDC space.
-//	auto clip_space_x = tmp.GetX() / tmp.w;
-//	auto clip_space_y = tmp.GetY() / tmp.w;
-//
-//	const auto half_width = screen_width / 2.0;
-//	const auto half_height = screen_height / 2.0;
-//
-//	// Get window space for x and y by performing viewport and depth range transform.
-//	clip_space_x = half_width * clip_space_x + (a.GetX() + half_width);
-//	clip_space_y = half_height * clip_space_y + (a.GetY() + half_height);
-//
-//	return {clip_space_x, clip_space_y};
-//}
 
 float MathHelper::Sqrt(const float square) {
 	/*float root = square / 3, diff = 1;
@@ -102,6 +82,4 @@ float MathHelper::Sqrt(const float square) {
 }
 
 float MathHelper::Cot(const float& A) { return std::cos(A) / std::sin(A); }
-
-float MathHelper::Deg2Rad(const float& Deg) { return Deg * PI / 180; }
 

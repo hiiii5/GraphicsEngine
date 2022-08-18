@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 
+#include "PixelShader.h"
 #include "VertexShader.h"
 
 class Matrix4X4;
@@ -30,7 +31,8 @@ public:
 
 	void UpdateFrame() const;
 
-	/*void SetVertexShader(const VertexShader& NewVertexShader);*/
+	void SetVertexShader(VertexShader* NewVertexShader);
+	void SetPixelShader(PixelShader* Shader);
 
 	uint32_t* GetFrame() const;
 
@@ -41,5 +43,6 @@ private:
 	uint32_t* OldPixels;
 	const uint32_t ClearColor;
 
-	//VertexShader* CurrentVertexProgram;
+	VertexShader* CurrentVertexProgram;
+	PixelShader* CurrentPixelShaderProgram;
 };

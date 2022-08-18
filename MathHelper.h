@@ -7,6 +7,8 @@
 
 class MathHelper {
 public:
+	static float Deg2Rad(float Degree);
+
 	static Vector2 GetParallelVec(const Vector2& A, const Vector2& B);
 
 	static Vector2 GetGradientVec(const Vector2& A, const Vector2& B);
@@ -16,6 +18,7 @@ public:
 	static float LerpF(const float& A, const float& B, float Ratio);
 
 	static uint32_t Floor(float A);
+	static uint32_t Floor(double A);
 
 	static float SolveLine(const float& CurX, const Vector2& P1, const Vector2& P2);
 
@@ -34,8 +37,6 @@ public:
 	static float Sqrt(float square);
 
 	static float Cot(const float& A);
-
-	static float Deg2Rad(const float& Deg);
 
 	static Matrix4X4 MatrixMultiply(const Matrix4X4& A, const Matrix4X4& B);
 };
