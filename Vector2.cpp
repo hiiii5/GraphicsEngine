@@ -8,7 +8,7 @@
 
 
 Vector2::Vector2(): Position{0, 0, 1} {}
-Vector2::Vector2(const double X, const double Y): Position{X, Y, 1} {}
+Vector2::Vector2(const float X, const float Y): Position{X, Y, 1} {}
 Vector2::~Vector2() = default;
 
 Vector2::Vector2(const Vector2& Other): Position{} {
@@ -54,19 +54,19 @@ Vector2& Vector2::operator-=(const Vector2& Other) {
 	return *this;
 }
 
-Vector2 Vector2::operator*(const double Other) const { return {this->GetX()*Other, this->GetY()*Other}; }
-Vector2& Vector2::operator*=(const double Other) { *this = *this * Other; return *this; }
+Vector2 Vector2::operator*(const float Other) const { return {this->GetX()*Other, this->GetY()*Other}; }
+Vector2& Vector2::operator*=(const float Other) { *this = *this * Other; return *this; }
 
-double Vector2::GetX() const { return this->Position[0]; }
-double Vector2::GetY() const { return this->Position[1]; }
+float Vector2::GetX() const { return this->Position[0]; }
+float Vector2::GetY() const { return this->Position[1]; }
 
-void Vector2::SetX(const double NewX) { this->Position[0] = NewX; }
-void Vector2::SetY(const double NewY) { this->Position[1] = NewY; }
+void Vector2::SetX(const float NewX) { this->Position[0] = NewX; }
+void Vector2::SetY(const float NewY) { this->Position[1] = NewY; }
 
-double Vector2::GetZ() const { return this->Position[2]; }
-void Vector2::SetZ(const double Z) { this->Position[2] = Z; }
+float Vector2::GetZ() const { return this->Position[2]; }
+void Vector2::SetZ(const float Z) { this->Position[2] = Z; }
 
-double Vector2::SquaredMagnitude() const { return this->GetX() * this->GetX() + this->GetY() * this->GetY(); }
+float Vector2::SquaredMagnitude() const { return this->GetX() * this->GetX() + this->GetY() * this->GetY(); }
 
 Vector2& Vector2::Translate(const Vector2& Other) {
 	this->SetX(GetX() + Other.GetX());
@@ -75,7 +75,7 @@ Vector2& Vector2::Translate(const Vector2& Other) {
 	return *this;
 }
 
-Vector2& Vector2::Scale(const double Multiplier) {
+Vector2& Vector2::Scale(const float Multiplier) {
 	SetX(GetX() * Multiplier);
 	SetY(GetY() * Multiplier);
 

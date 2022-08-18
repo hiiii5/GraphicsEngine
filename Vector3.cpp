@@ -4,7 +4,7 @@
 #include "Matrix4x4.h"
 
 Vector3::Vector3() : Position{0, 0, 0, 1} {}
-Vector3::Vector3(const double X, const double Y, const double Z) : Position{X, Y, Z, 1} {}
+Vector3::Vector3(const float X, const float Y, const float Z) : Position{X, Y, Z, 1} {}
 Vector3::~Vector3() = default;
 
 Vector3::Vector3(const Vector3& Other) : Position{Other.GetX(), Other.GetY(), Other.GetZ(), Other.GetW()} {}
@@ -40,30 +40,30 @@ Vector3& Vector3::operator+=(const Vector3& Other) {
 	return *this;
 }
 
-Vector3 Vector3::operator*(const double Other) const {
+Vector3 Vector3::operator*(const float Other) const {
 	return { GetX() * Other, GetY()*Other, GetZ()*Other };
 }
-Vector3& Vector3::operator*=(const double Other) {
+Vector3& Vector3::operator*=(const float Other) {
 	*this = *this * Other; return *this;
 }
 
-Vector3 Vector3::operator/(const double Other) const {
+Vector3 Vector3::operator/(const float Other) const {
 	auto _ = Vector3{GetX() / Other, GetY() / Other, GetZ() / Other};
 	_.SetW(GetW()/ Other);
 	return _;
 }
 
-double Vector3::GetX() const { return this->Position[0]; }
-double Vector3::GetY() const { return this->Position[1]; }
-double Vector3::GetZ() const { return this->Position[2]; }
+float Vector3::GetX() const { return this->Position[0]; }
+float Vector3::GetY() const { return this->Position[1]; }
+float Vector3::GetZ() const { return this->Position[2]; }
 Vector2 Vector3::GetXy() const { return {this->GetX(), this->GetY()};}
 
-double Vector3::GetW() const { return this->Position[3]; }
-void Vector3::SetW(const double NewW) { this->Position[3] = NewW; }
+float Vector3::GetW() const { return this->Position[3]; }
+void Vector3::SetW(const float NewW) { this->Position[3] = NewW; }
 
-void Vector3::SetX(const double NewX) { this->Position[0] = NewX; }
-void Vector3::SetY(const double NewY) { this->Position[1] = NewY; }
-void Vector3::SetZ(const double NewZ) { this->Position[2] = NewZ; }
+void Vector3::SetX(const float NewX) { this->Position[0] = NewX; }
+void Vector3::SetY(const float NewY) { this->Position[1] = NewY; }
+void Vector3::SetZ(const float NewZ) { this->Position[2] = NewZ; }
 
 Vector3& Vector3::Translate(const Vector3& Other) {
 	SetX(GetX() + Other.GetX());
@@ -73,7 +73,7 @@ Vector3& Vector3::Translate(const Vector3& Other) {
 	return *this;
 }
 
-Vector3& Vector3::Scale(const double Multiplier) {
+Vector3& Vector3::Scale(const float Multiplier) {
 	SetX(GetX() * Multiplier);
 	SetY(GetY() * Multiplier);
 	SetZ(GetZ() * Multiplier);

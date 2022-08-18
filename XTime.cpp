@@ -1,7 +1,7 @@
 #include "XTime.h"
 #include <math.h>
 
-XTime::XTime(unsigned char samples, double smoothFactor)
+XTime::XTime(unsigned char samples, float smoothFactor)
 {
 	// clear the structure and init basic values
 	ZeroMemory(&localStack,sizeof(THREAD_DATA));
@@ -25,16 +25,16 @@ void XTime::Restart()
     QueryPerformanceCounter( &localStack.start ); 
 	localStack.signals[localStack.signalCount++] = localStack.start;
 }
-double XTime::TotalTime()
+float XTime::TotalTime()
 {
 	return localStack.totalTime;
 }
-double XTime::TotalTimeExact()
+float XTime::TotalTimeExact()
 {
 	LARGE_INTEGER now;
 	QueryPerformanceCounter( &now ); // what is the time right now?
 	LONGLONG elapsed = now.QuadPart - localStack.start.QuadPart; // determine time elapsed since the start.
-	return double(elapsed) / double(localStack.frequency.QuadPart); // return in seconds
+	return float(elapsed) / float(localStack.frequency.QuadPart); // return in seconds
 }
 // Append to the signal buffer and compute resulting times
 void XTime::Signal()
@@ -45,10 +45,10 @@ void XTime::Signal()
 	QueryPerformanceCounter( localStack.signals );
 	localStack.signalCount = min( localStack.signalCount+1, 255 );
 	// with our signal buffer updated, we can now compute our timing values
-	localStack.totalTime = double((*localStack.signals).QuadPart - localStack.start.QuadPart) / double(localStack.frequency.QuadPart);
-	localStack.deltaTime = double(localStack.signals[0].QuadPart - localStack.signals[1].QuadPart) / double(localStack.frequency.QuadPart);
+	localStack.totalTime = float((*localStack.signals).QuadPart - localStack.start.QuadPart) / float(localStack.frequency.QuadPart);
+	localStack.deltaTime = float(localStack.signals[0].QuadPart - localStack.signals[1].QuadPart) / float(localStack.frequency.QuadPart);
 	// with our signal buffer updated we can compute our weighted average for a smoother delta curve.
-	double totalWeight = 0, runningWeight = 1;
+	float totalWeight = 0, runningWeight = 1;
 	LONGLONG totalValue = 0, sampleDelta;
 	// loop up to num samples or as many as we have available
 	for(unsigned char i = 0; i < min(localStack.numSamples, localStack.signalCount-1); ++i)
@@ -60,13 +60,13 @@ void XTime::Signal()
 		runningWeight *= localStack.blendWeight; // adjust the weight of next delta
 	}
 	// with our totals calculated, determine the weighted average.
-	localStack.smoothDelta = (totalValue / totalWeight) / double(localStack.frequency.QuadPart);
+	localStack.smoothDelta = (totalValue / totalWeight) / float(localStack.frequency.QuadPart);
 	
 	++localStack.actualHz;
 	
 	// done calculating deltas, now determine frame rate. (signals-per-second)
 	++localStack.elapsedSignals; // track passed signals
-	double sinceLast = localStack.totalTime - localStack.lastSecond; 
+	float sinceLast = localStack.totalTime - localStack.lastSecond; 
 	if(sinceLast >= 0.1) // update 10 times per second if possible
 	{ 
 		localStack.samplesPerSecond = localStack.elapsedSignals / sinceLast; 
@@ -74,21 +74,21 @@ void XTime::Signal()
 		localStack.elapsedSignals = 0;
 	}// done
 }
-double XTime::Delta()
+float XTime::Delta()
 {
 	return localStack.deltaTime;
 }
-double XTime::SmoothDelta()
+float XTime::SmoothDelta()
 {
 	return localStack.smoothDelta;
 }
-double XTime::SamplesPerSecond()
+float XTime::SamplesPerSecond()
 {
 	return localStack.samplesPerSecond;
 }
 // Slow down or speed up a thread to match a desired cycle rate(Hz)
 // Ver 1.2: Now utilizes 10Hz FPS counter for more granular slow down.
-void XTime::Throttle(double targetHz) 
+void XTime::Throttle(float targetHz) 
 {	
 	if(targetHz > 1) // SOLVED!!!!!!
 	{

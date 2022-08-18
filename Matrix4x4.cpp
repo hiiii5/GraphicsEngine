@@ -11,7 +11,7 @@ Matrix4X4::Matrix4X4() : M{} {
 	this->LoadIdentity();
 }
 
-Matrix4X4::Matrix4X4(const double NewM[16]) : M{} {
+Matrix4X4::Matrix4X4(const float NewM[16]) : M{} {
 	// Copy the new matrix array into the old
 	for (int i = 0; i < 16; ++i) { this->M[i] = NewM[i]; }
 }
@@ -49,7 +49,7 @@ Matrix4X4& Matrix4X4::operator+=(const Matrix4X4& Other) {
 }
 
 Matrix4X4 Matrix4X4::operator*(const Matrix4X4& Other) const {
-	double tmp[16];
+	float tmp[16];
 
 	// Row 1
 	tmp[0] = this->M[0] * Other.M[0] + this->M[1] * Other.M[4] + this->M[2] * Other.M[8] + this->M[3] * Other.M[12];
@@ -100,7 +100,7 @@ Matrix4X4& Matrix4X4::Transform(const Matrix4X4& Other) {
 }
 
 Matrix4X4& Matrix4X4::Translate(const Vector3& Translation) {
-	const double translationMatrix[16] = {
+	const float translationMatrix[16] = {
 		1, 0, 0, 0,
 		0, 1, 0, 0,
 		0, 0, 1, 0,
@@ -114,7 +114,7 @@ Matrix4X4& Matrix4X4::Translate(const Vector3& Translation) {
 }
 
 Matrix4X4& Matrix4X4::Scale(const Vector3& Scale) {
-	const auto scalingMatrix = Matrix4X4(new double[]{
+	const auto scalingMatrix = Matrix4X4(new float[]{
 		Scale.GetX(), 0, 0, 0,
 		0, Scale.GetY(), 0, 0,
 		0, 0, Scale.GetZ(), 0,
@@ -162,7 +162,7 @@ Matrix4X4& Matrix4X4::SetScale(const Vector3& Scale) {
 Matrix4X4 Matrix4X4::Transpose() const {
 	Matrix4X4 m = *this;
 	// Flip rows and cols.
-	double tmp = 0.0;
+	float tmp = 0.0;
 
 	// Do nothing for identity coordinates. Interchange the outsides, and then come in to finish.
 	tmp = m[1];
@@ -195,24 +195,24 @@ Matrix4X4 Matrix4X4::Transpose() const {
 Matrix4X4 Matrix4X4::Inverse() const {
 	Matrix4X4 result;
 
-	double d12 = (this->M[8] * this->M[13] - this->M[12] * this->M[9]);
-	double d13 = (this->M[8] * this->M[14] - this->M[12] * this->M[10]);
-	double d23 = (this->M[9] * this->M[14] - this->M[13] * this->M[10]);
-	double d24 = (this->M[9] * this->M[15] - this->M[13] * this->M[11]);
-	double d34 = (this->M[10] * this->M[15] - this->M[14] * this->M[11]);
-	double d41 = (this->M[11] * this->M[12] - this->M[15] * this->M[8]);
+	float d12 = (this->M[8] * this->M[13] - this->M[12] * this->M[9]);
+	float d13 = (this->M[8] * this->M[14] - this->M[12] * this->M[10]);
+	float d23 = (this->M[9] * this->M[14] - this->M[13] * this->M[10]);
+	float d24 = (this->M[9] * this->M[15] - this->M[13] * this->M[11]);
+	float d34 = (this->M[10] * this->M[15] - this->M[14] * this->M[11]);
+	float d41 = (this->M[11] * this->M[12] - this->M[15] * this->M[8]);
 
-	double tmp[16];
+	float tmp[16];
 	tmp[0] = (this->M[5] * d34 - this->M[6] * d24 + this->M[7] * d23);
 	tmp[1] = -(this->M[4] * d34 + this->M[6] * d41 + this->M[7] * d13);
 	tmp[2] = (this->M[4] * d24 + this->M[5] * d41 + this->M[7] * d12);
 	tmp[3] = -(this->M[4] * d23 - this->M[5] * d13 + this->M[6] * d12);
 
-	const double determinant = this->M[0] * tmp[0] + this->M[1] * tmp[1] + this->M[2] * tmp[2] + this->M[3] * tmp[
+	const float determinant = this->M[0] * tmp[0] + this->M[1] * tmp[1] + this->M[2] * tmp[2] + this->M[3] * tmp[
 		3];
 	if (determinant == 0.0) { result = Matrix4X4{}.LoadIdentity(); }
 	else {
-		const double inv_det = 1.0 / determinant;
+		const float inv_det = 1.0 / determinant;
 		tmp[0] *= inv_det;
 		tmp[1] *= inv_det;
 		tmp[2] *= inv_det;
@@ -237,7 +237,7 @@ Matrix4X4 Matrix4X4::Inverse() const {
 		tmp[13] = (this->M[8] * d34 + this->M[10] * d41 + this->M[11] * d13) * inv_det;
 		tmp[14] = -(this->M[8] * d24 + this->M[9] * d41 + this->M[11] * d12) * inv_det;
 		tmp[15] = (this->M[8] * d23 - this->M[9] * d13 + this->M[10] * d12) * inv_det;
-		memcpy(result.M, tmp, 16 * sizeof(double));
+		memcpy(result.M, tmp, 16 * sizeof(float));
 	}
 
 	return result.Transpose();
@@ -249,7 +249,7 @@ Matrix4X4& Matrix4X4::Invert() {
 }
 
 Matrix4X4& Matrix4X4::LoadIdentity() {
-	constexpr double temp[16]{
+	constexpr float temp[16]{
 		1, 0, 0, 0,
 		0, 1, 0, 0,
 		0, 0, 1, 0,
@@ -261,8 +261,8 @@ Matrix4X4& Matrix4X4::LoadIdentity() {
 	return *this;
 }
 
-Matrix4X4 Matrix4X4::GetRotationX(const double Radians) {
-	double _[16] = {
+Matrix4X4 Matrix4X4::GetRotationX(const float Radians) {
+	float _[16] = {
 		1, 0, 0, 0,
 		0, std::cos(Radians), -std::sin(Radians), 0,
 		0, std::sin(Radians), std::cos(Radians), 0,
@@ -272,8 +272,8 @@ Matrix4X4 Matrix4X4::GetRotationX(const double Radians) {
 	return Matrix4X4(_);
 }
 
-Matrix4X4 Matrix4X4::GetRotationY(const double Radians) {
-	double _[16] = {
+Matrix4X4 Matrix4X4::GetRotationY(const float Radians) {
+	float _[16] = {
 		std::cos(Radians), 0, -std::sin(Radians), 0,
 		0, 1, 0, 0,
 		std::sin(Radians), 0, std::cos(Radians), 0,
@@ -283,8 +283,8 @@ Matrix4X4 Matrix4X4::GetRotationY(const double Radians) {
 	return Matrix4X4(_);
 }
 
-Matrix4X4 Matrix4X4::GetRotationZ(const double Radians) {
-	double _[16] = {
+Matrix4X4 Matrix4X4::GetRotationZ(const float Radians) {
+	float _[16] = {
 		std::cos(Radians), -std::sin(Radians), 0, 0,
 		std::sin(Radians), std::cos(Radians), 0, 0,
 		0, 0, 1, 0,
@@ -306,7 +306,7 @@ std::string Matrix4X4::ToString() const {
 	return ret;
 }
 
-double& Matrix4X4::operator[](const unsigned int Index) {
+float& Matrix4X4::operator[](const unsigned int Index) {
 	if (Index > 15) { throw std::exception("Array out of bounds"); }
 
 	return this->M[Index];

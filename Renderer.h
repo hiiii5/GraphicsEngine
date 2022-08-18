@@ -1,6 +1,8 @@
 #pragma once
 #include <cstdint>
 
+#include "VertexShader.h"
+
 class Matrix4X4;
 class Vector3;
 class Camera;
@@ -20,13 +22,15 @@ public:
 
 	void DrawLine(const Vector2& Start, const Vector2& End, uint32_t Color = 0xFFFFFFFF) const;
 
-	void DrawGrid(const Camera* Viewer, int WidthDivisions, int HeightDivisions, double GridWidth, double GridHeight, const uint32_t& Color = 0xFFFFFFFF) const;
+	void DrawGrid(const Camera* Viewer, int WidthDivisions, int HeightDivisions, float GridWidth, float GridHeight, const uint32_t& Color = 0xFFFFFFFF) const;
 
-	void DrawUnitAxis(const Camera* C, double AxisLength = 2.5) const;
+	void DrawUnitAxis(const Camera* C, float AxisLength = 2.5) const;
 
-	void DrawWireCube(const Camera* C, const Matrix4X4& Transform, double Scale, const uint32_t& Color) const;
+	void DrawWireCube(const Camera* C, const Matrix4X4& Transform, float Scale, const uint32_t& Color) const;
 
 	void UpdateFrame() const;
+
+	/*void SetVertexShader(const VertexShader& NewVertexShader);*/
 
 	uint32_t* GetFrame() const;
 
@@ -36,4 +40,6 @@ private:
 	uint32_t* Pixels;
 	uint32_t* OldPixels;
 	const uint32_t ClearColor;
+
+	//VertexShader* CurrentVertexProgram;
 };

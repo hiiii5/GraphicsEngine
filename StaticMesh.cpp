@@ -15,3 +15,8 @@ std::vector<uint32_t> StaticMesh::GetIndices() { return Indices; }
 Vector3 StaticMesh::GetVertexAt(const uint32_t Index) { return Vertices.at(Index); }
 
 uint32_t StaticMesh::GetIndexAt(const uint32_t Index) const { return Indices.at(Index); }
+
+VertexShader StaticMesh::GetVertexShader() const {
+	return Vs;
+}
+

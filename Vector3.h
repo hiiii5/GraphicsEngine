@@ -8,7 +8,7 @@ class Matrix4X4;
 class Vector3 {
 public:
 	Vector3();
-	Vector3(double X, double Y, double Z);
+	Vector3(float X, float Y, float Z);
 	~Vector3();
 
 	Vector3(const Vector3& Other);
@@ -21,28 +21,28 @@ public:
 	Vector3 operator+(const Vector3& Other) const;
 	Vector3& operator+=(const Vector3& Other);
 
-	Vector3 operator*(double Other) const;
-	Vector3& operator*=(double Other);
+	Vector3 operator*(float Other) const;
+	Vector3& operator*=(float Other);
 
-	Vector3 operator/(double Other) const;
+	Vector3 operator/(float Other) const;
 
 	/**=== Getters and Setters ===*/
-	double GetX() const;
-	double GetY() const;
-	double GetZ() const;
+	float GetX() const;
+	float GetY() const;
+	float GetZ() const;
 
 	Vector2 GetXy() const;
 
 	/** Get the w component for the vector 3, this is the homogeneous coordinate and would be used for depth. */
-	double GetW() const;
-	void SetW(double NewW);
+	float GetW() const;
+	void SetW(float NewW);
 
-	void SetX(double NewX);
-	void SetY(double NewY);
-	void SetZ(double NewZ);
+	void SetX(float NewX);
+	void SetY(float NewY);
+	void SetZ(float NewZ);
 
 	Vector3& Translate(const Vector3& Other);
-	Vector3& Scale(double Multiplier);
+	Vector3& Scale(float Multiplier);
 	Vector3& Scale(const Vector3& Other);
 	Vector3& Rotate(const Matrix4X4& Other);
 
@@ -55,6 +55,6 @@ public:
 	std::string ToString() const;
 
 private:
-	double Position[4]; // XYZW
+	float Position[4]; // XYZW
 };
 

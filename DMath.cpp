@@ -2,4 +2,4 @@
 
 #include "MathDefines.h"
 
-bool DMath::IsEqual(const double Lhs, const double Rhs) { return Lhs - Rhs <= DEPSILON; }
+bool DMath::IsEqual(const float Lhs, const float Rhs) { return Lhs - Rhs <= DEPSILON; }

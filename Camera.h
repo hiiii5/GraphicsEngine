@@ -5,8 +5,8 @@
 
 class Camera : public Actor {
 public:
-	Camera(const double NearPlane, const double FarPlane, const uint32_t ScreenWidth, const uint32_t ScreenHeight,
-		   const double FieldOfView)
+	Camera(const float NearPlane, const float FarPlane, const uint32_t ScreenWidth, const uint32_t ScreenHeight,
+		   const float FieldOfView)
 		: NearPlane(NearPlane),
 		  FarPlane(FarPlane),
 		  ScreenWidth(ScreenWidth),
@@ -14,23 +14,23 @@ public:
 		  FieldOfView(FieldOfView),
 		  WorldTransform(Matrix4X4{}) {}
 
-	double GetNearPlane() const { return NearPlane; }
-	void SetNearPlane(const double NearPlane) { this->NearPlane = NearPlane; }
-	double GetFarPlane() const { return FarPlane; }
-	void SetFarPlane(const double FarPlane) { this->FarPlane = FarPlane; }
+	float GetNearPlane() const { return NearPlane; }
+	void SetNearPlane(const float NearPlane) { this->NearPlane = NearPlane; }
+	float GetFarPlane() const { return FarPlane; }
+	void SetFarPlane(const float FarPlane) { this->FarPlane = FarPlane; }
 	uint32_t GetScreenWidth() const { return ScreenWidth; }
 	void SetScreenWidth(const uint32_t ScreenWidth) { this->ScreenWidth = ScreenWidth; }
 	uint32_t GetScreenHeight() const { return ScreenHeight; }
 	void SetScreenHeight(const uint32_t ScreenHeight) { this->ScreenHeight = ScreenHeight; }
-	double GetFieldOfView() const { return FieldOfView; }
-	void SetFieldOfView(const double FieldOfView) { this->FieldOfView = FieldOfView; }
+	float GetFieldOfView() const { return FieldOfView; }
+	void SetFieldOfView(const float FieldOfView) { this->FieldOfView = FieldOfView; }
 	Matrix4X4 GetWorldTransform() const { return WorldTransform; }
 	void SetWorldTransform(const Matrix4X4& WorldTransform) { this->WorldTransform = WorldTransform; }
 
 private:
-	double NearPlane, FarPlane;
+	float NearPlane, FarPlane;
 	uint32_t ScreenWidth, ScreenHeight;
-	double FieldOfView;
+	float FieldOfView;
 
 	Matrix4X4 WorldTransform;
 

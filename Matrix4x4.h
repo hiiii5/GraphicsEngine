@@ -8,7 +8,7 @@ class Matrix4X4 {
 public:
 	Matrix4X4();
 
-	explicit Matrix4X4(const double NewM[16]);
+	explicit Matrix4X4(const float NewM[16]);
 	~Matrix4X4();
 
 	/**=== Copy and Move ===*/
@@ -41,17 +41,17 @@ public:
 
 	Matrix4X4& LoadIdentity();
 
-	static Matrix4X4 GetRotationX(double Radians);
-	static Matrix4X4 GetRotationY(double Radians);
-	static Matrix4X4 GetRotationZ(double Radians);
+	static Matrix4X4 GetRotationX(float Radians);
+	static Matrix4X4 GetRotationY(float Radians);
+	static Matrix4X4 GetRotationZ(float Radians);
 
 	std::string ToString() const;
 
-	double& operator[](unsigned int Index);
+	float& operator[](unsigned int Index);
 
 	friend bool operator==(const Matrix4X4& Lhs, const Matrix4X4& Rhs);
 	friend bool operator!=(const Matrix4X4& Lhs, const Matrix4X4& Rhs);
 
 private:
-	double M[16];
+	float M[16];
 };

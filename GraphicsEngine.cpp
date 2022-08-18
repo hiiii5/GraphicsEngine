@@ -8,6 +8,7 @@
 #include "MathDefines.h"
 #include "XTime.h"
 
+#include "VertexShader.h"
 
 
 constexpr uint32_t WIDTH = 500;

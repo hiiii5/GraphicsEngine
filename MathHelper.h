@@ -11,17 +11,17 @@ public:
 
 	static Vector2 GetGradientVec(const Vector2& A, const Vector2& B);
 
-	static double LerpD(const double& A, const double& B, float Ratio);
+	static float LerpD(const float& A, const float& B, float Ratio);
 
-	static float LerpF(const double& A, const double& B, float Ratio);
+	static float LerpF(const float& A, const float& B, float Ratio);
 
-	static uint32_t Floor(double A);
+	static uint32_t Floor(float A);
 
-	static double SolveLine(const double& CurX, const Vector2& P1, const Vector2& P2);
+	static float SolveLine(const float& CurX, const Vector2& P1, const Vector2& P2);
 
-	static double SolveLine2(const double& X, const Vector2& P1, const Vector2& P2);
+	static float SolveLine2(const float& X, const Vector2& P1, const Vector2& P2);
 
-	static uint32_t Get2DIndex(const double& X, const double& Y, uint32_t BufferWidth);
+	static uint32_t Get2DIndex(const float& X, const float& Y, uint32_t BufferWidth);
 
 	static void GetMinAndMaxX(Vector2& Min, Vector2& Max, const Vector2& Start, const Vector2& End);
 
@@ -31,11 +31,11 @@ public:
 								 const mat_4x4& perspective_matrix, uint32_t screen_width, uint32_t screen_height);*/
 
 	// Credit of Weather Vane https://stackoverflow.com/questions/29018864/any-way-to-obtain-square-root-of-a-number-without-using-math-h-and-sqrt
-	static double Sqrt(double square);
+	static float Sqrt(float square);
 
-	static double Cot(const double& A);
+	static float Cot(const float& A);
 
-	static double Deg2Rad(const double& Deg);
+	static float Deg2Rad(const float& Deg);
 
 	static Matrix4X4 MatrixMultiply(const Matrix4X4& A, const Matrix4X4& B);
 };

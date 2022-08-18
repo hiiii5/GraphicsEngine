@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
 
+#include "VertexShader.h"
+
 class Vector3;
 
 class StaticMesh {
@@ -17,7 +19,11 @@ public:
 	Vector3 GetVertexAt(uint32_t Index);
 	uint32_t GetIndexAt(uint32_t Index) const;
 
+	VertexShader GetVertexShader() const;
+
 private:
 	std::vector<Vector3> Vertices;
 	std::vector<uint32_t> Indices;
+
+	VertexShader Vs;
 };

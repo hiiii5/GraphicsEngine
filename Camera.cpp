@@ -72,7 +72,7 @@ Matrix4X4 Camera::GetPerspectiveProjection() const {
 	const auto yScale = std::cos(FieldOfView/2) / std::sin(FieldOfView/2);
 	const auto xScale = yScale * ratio;
 
-	const double _[16] = {
+	const float _[16] = {
 		xScale, 0, 0, 0,
 		0, yScale, 0, 0,
 		0, 0, FarPlane / (FarPlane - NearPlane), 1,

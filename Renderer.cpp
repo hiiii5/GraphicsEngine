@@ -8,6 +8,7 @@
 #include "Vector2.h"
 #include "Vector3.h"
 
+// TODO Initialize current vertex program or remove.
 Renderer::Renderer(const uint32_t Width, const uint32_t Height, const uint32_t ClearColor): Width(Width),
 																							Height(Height),
 																							ClearColor(ClearColor) {
@@ -21,7 +22,7 @@ Renderer::Renderer(const uint32_t Width, const uint32_t Height, const uint32_t C
 	memcpy(OldPixels, Pixels, size);
 }
 
-Renderer::~Renderer() { delete[] Pixels; delete[] OldPixels; }
+Renderer::~Renderer() { delete[] Pixels; delete[] OldPixels; /*delete CurrentVertexProgram;*/ }
 
 void Renderer::ClearBuffer() const {
 	for (uint32_t i = 0; i < GetScreenSize() * sizeof Pixels; i++) { Pixels[i] = ClearColor; }
@@ -81,13 +82,13 @@ void Renderer::DrawLine(const Vector2& Start, const Vector2& End, const uint32_t
 	int deltaY = static_cast<int>(std::abs(rp.GetY() - lp.GetY()));
 
 	int i;
-	double ndx, ndy;
-	double x, y;
+	float ndx, ndy;
+	float x, y;
 
 	// If the change in x is greater than the change in y, then we are in the middle two octants.
 	if(deltaX > deltaY) {
 		// Get the signed value of delta y
-		deltaY = rp.GetY() - lp.GetY(); // Truncate the double.
+		deltaY = rp.GetY() - lp.GetY(); // Truncate the float.
 		ndy = 1.0*deltaY / deltaX;
 
 		x = lp.GetX();
@@ -114,12 +115,12 @@ void Renderer::DrawLine(const Vector2& Start, const Vector2& End, const uint32_t
 	}
 }
 
-void Renderer::DrawGrid(const Camera* Viewer, const int WidthDivisions, const int HeightDivisions, const double GridWidth, const double GridHeight, const uint32_t& Color) const {
+void Renderer::DrawGrid(const Camera* Viewer, const int WidthDivisions, const int HeightDivisions, const float GridWidth, const float GridHeight, const uint32_t& Color) const {
 	// Draw x lines
 	const auto halfWidth = (GridWidth / 2);
 	const auto halfHeight = (GridWidth / 2);
 
-	double j;
+	float j;
 	// Draw x lines
 	const auto deltaX = (GridWidth / WidthDivisions) * 2;
 	for (j = -GridHeight; j <= GridHeight; j += deltaX) {
@@ -137,7 +138,7 @@ void Renderer::DrawGrid(const Camera* Viewer, const int WidthDivisions, const in
 	}
 }
 
-void Renderer::DrawUnitAxis(const Camera* C, const double AxisLength) const {
+void Renderer::DrawUnitAxis(const Camera* C, const float AxisLength) const {
 	const auto x2 = Vector3::XVector3() * AxisLength;
 	const auto y2 = Vector3::YVector3() * AxisLength;
 	const auto z2 = Vector3::ZVector3() * AxisLength;
@@ -147,7 +148,7 @@ void Renderer::DrawUnitAxis(const Camera* C, const double AxisLength) const {
 	DrawLine(C->ProjectOntoScreen2(Vector3::ZeroVector3()), C->ProjectOntoScreen2(z2), 0xFF0000AA);
 }
 
-void Renderer::DrawWireCube(const Camera* C, const Matrix4X4& Transform, const double Scale,const uint32_t& Color) const {
+void Renderer::DrawWireCube(const Camera* C, const Matrix4X4& Transform, const float Scale,const uint32_t& Color) const {
 
 	Vector3 points[8];
 
@@ -163,6 +164,13 @@ void Renderer::DrawWireCube(const Camera* C, const Matrix4X4& Transform, const d
 	points[6] = Vector3( halfScale,  halfScale,  halfScale);
 	points[7] = Vector3(-halfScale,  halfScale,  halfScale);
 
+	// TODO Fix
+	/*if(CurrentVertexProgram) {
+		for (int i = 0; i < 8; ++i) {
+			points[i] = CurrentVertexProgram->BindAndExecute([](){}, Vertex{ points[i] });
+		}
+	}*/
+
 	Vector2 projectedPoints[8];
 	for (int i = 0; i < 8; ++i) {
 		projectedPoints[i] = C->ProjectOntoScreen2(points[i], Transform);
@@ -174,6 +182,11 @@ void Renderer::DrawWireCube(const Camera* C, const Matrix4X4& Transform, const d
 		DrawLine(projectedPoints[i], projectedPoints[i + 4], Color);
 	}
 }
+
+//void Renderer::SetVertexShader(const VertexShader& NewVertexShader) {
+//	// TODO Fix
+//	//CurrentVertexProgram = NewVertexShader;
+//}
 
 void Renderer::UpdateFrame() const { memcpy(OldPixels, Pixels, GetScreenSize() * sizeof Pixels); }
 
