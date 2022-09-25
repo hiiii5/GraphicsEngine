@@ -4,6 +4,6 @@
 
 int main()
 {
-    GEngine::Get()->Start(700, 500);
+    GEngine::Get()->Start(500, 500);
 }
 

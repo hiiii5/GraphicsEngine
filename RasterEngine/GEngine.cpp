@@ -38,7 +38,7 @@ void GEngine::Start(const unsigned NewWidth, const unsigned NewHeight) {
 	DeltaTime = 0.0f;
 	ElapsedTime += DeltaTime;
 
-	MainCamera = new Camera(0.01f, 10.0f, Deg2Rad(90.0f), Width, Height, Mat4().Rotate({ -18.0f, 0.0f, 0 }).Translate({ 0, 0.5, -4.5 }));
+	MainCamera = new Camera(0.01f, 10.0f, Deg2Rad(90.0f), Width, Height, Mat4().Rotate({ -18.0f, 0.0f, 0 }).Translate({ 0, 0.5, -4.0 }));
 
 	StartEvent.Notify();
 

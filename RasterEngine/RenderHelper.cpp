@@ -72,9 +72,10 @@ void RenderHelper::DrawLine(const Vec2F& Start, const Vec2F& End) {
 		y = lp.Y;
 
 		for (i = 0; i < deltaX; i++) {
-			Color c = Color(Color::White);
+			auto c = Color(Color::White);
 			Vec2F uv = { 0,0 };
-			if (CurrentShader) { CurrentShader->PixelShader(c, uv); }
+			auto v = Color(Color::White); // Default vert
+			if (CurrentShader) { CurrentShader->PixelShader(v, c, uv); }
 
 			DrawPixel(c.Get(), static_cast<uint32_t>(x), static_cast<uint32_t>(y)); // Truncate the float
 			x++;
@@ -90,9 +91,10 @@ void RenderHelper::DrawLine(const Vec2F& Start, const Vec2F& End) {
 		y = lp.Y;
 
 		for (i = 0; i < std::abs(deltaY); i++) {
-			Color c = Color(Color::White);
+			auto c = Color(Color::White);
 			Vec2F uv = { 0,0 };
-			if (CurrentShader) { CurrentShader->PixelShader(c, uv); }
+			auto v = Color(Color::White);
+			if (CurrentShader) { CurrentShader->PixelShader(v, c, uv); }
 
 			DrawPixel(c.Get(), static_cast<uint32_t>(x), static_cast<uint32_t>(y)); // Truncate the float
 			y += rp.Y < lp.Y ? -1 : 1;
@@ -205,24 +207,24 @@ void RenderHelper::FillTriangle(const Camera* C, Mat4& Transform, const std::vec
 	auto scaledUv1 = Uv[1] / v1.Z;
 	auto scaledUv2 = Uv[2] / v2.Z;
 
+	const auto engine = GEngine::Get();
+
 	// Get the bounding box for the triangle
-	auto maxX = Floor(Max(v0.X, Max(v1.X, v2.X)));
 	auto minX = Floor(Min(v0.X, Min(v1.X, v2.X)));
-	auto maxY = Floor(Max(v0.Y, Max(v1.Y, v2.Y)));
+	auto maxX = Floor(Max(v0.X, Max(v1.X, v2.X)));
 	auto minY = Floor(Min(v0.Y, Min(v1.Y, v2.Y)));
-	
+	auto maxY = Floor(Max(v0.Y, Max(v1.Y, v2.Y)));
+
+	// Clamp to screen space.
 	minX = max(minX, 0);
 	minY = max(minY, 0);
 	maxX = min(maxX, GEngine::Get()->Width - 1);
 	maxY = min(maxY, GEngine::Get()->Height - 1);
 
-	// Calculate the area of the parallelogram.
-	//const auto area = Edge(v2, v1, v0);
-
 	// For every point in the bounding box, determine if it falls on the triangle.
 	for (unsigned y = minY; y <= maxY; y++) {
 		for (unsigned x = minX; x <= maxX; x++) {
-			const auto p = Vec2F{ (float)x, (float)y };
+			auto p = Vec2F{ (float)x, (float)y };
 
 			const auto bary = GetBarycentric(p, v0, v1, v2);
 
@@ -232,7 +234,7 @@ void RenderHelper::FillTriangle(const Camera* C, Mat4& Transform, const std::vec
 			// Interpolate between the depth of the original points.
 			const auto lerpZ = v0.Z * bary.X + v1.Z * bary.Y + v2.Z * bary.Z;
 
-			const auto engine = GEngine::Get();
+			
 
 			// Check the depth of the current pixel and if it is farther away than the older one.
 			if(engine->Depth[TwoD2OneD(x, y, engine->Width)] <= lerpZ || lerpZ < C->NearPlane || lerpZ > C->FarPlane) continue;
@@ -254,28 +256,27 @@ void RenderHelper::FillTriangle(const Camera* C, Mat4& Transform, const std::vec
 			const float lg = bary.X * p1.Light.Y + bary.Y * p2.Light.Y + bary.Z * p3.Light.Y;
 			const float lb = bary.X * p1.Light.Z + bary.Y * p2.Light.Z + bary.Z * p3.Light.Z;
 
+			// Calculate lighting color.
+			auto lc = Color((lr+lg+lb)/3.0f, lr, lg, lb);
+
 			// Run the current pixel shader to affect the final color and uv.
 			Color col{a, r, g, b};
 			if (CurrentShader) {
-				CurrentShader->PixelShader(col, uv);
+				
+				CurrentShader->PixelShader(lc, col, uv);
 			}
-
-			// Apply lighting.
-			col.R *= lr;
-			col.G *= lg;
-			col.B *= lb;
 
 			// Update the depth of this pixel in the buffer.
 			engine->Depth[TwoD2OneD(x, y, engine->Width)] = lerpZ;
 
-			DrawPixel(col.Get(), x, y);
+			DrawPixel(col.Get(), Floor(p.X), Floor(p.Y));
 		}
 	}
 }
 
 void RenderHelper::FillMesh(const Camera* C, Mat4& Transform, std::vector<Vert> Vertices,
 							const std::vector<unsigned>& Indices, const std::vector<Vec2F>& Uv) {
-	for (uint32_t i = 0; i < Indices.size(); i += 3) {
+	for (unsigned i = 0; i < Indices.size(); i += 3) {
 		std::vector<Vert> curTriangle;
 		curTriangle.emplace_back(Vertices[Indices[i]]);
 		curTriangle.emplace_back(Vertices[Indices[i + 1]]);

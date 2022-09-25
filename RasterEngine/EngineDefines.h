@@ -67,7 +67,7 @@ static float Max(const float A, const float B) {
 	return std::max(A, B);
 }
 
-static float Clamp(const float Value, const float Min, const float Max) {
+static float Clamp(const float Value, const float Min = 0.0f, const float Max = 1.0f) {
 	float ret = Value;
 	if(ret < Min) ret = Min;
 	if (ret > Max) ret = Max;
@@ -207,6 +207,10 @@ struct Vec3F {
 
 	float X, Y, Z, W;
 
+	float Length() const {
+		return sqrt(X*X + Y*Y + Z*Z);
+	}
+
 #pragma region Operators
 	Vec3F operator+(const float C) const {
 		return {X + C, Y + C, Z + C};
@@ -293,6 +297,24 @@ struct Vec3F {
 		return sqrt((End.X - Start.X * End.X - Start.X)
 					+ (End.Y - Start.Y * End.Y - Start.Y)
 					+ (End.Z - Start.Z * End.Z - Start.Z));
+	}
+
+	static Vec3F Normalize(Vec3F& V) {
+		const auto length = V.Length();
+		V.X /= length;
+		V.Y /= length;
+		V.Z /= length;
+
+		return V;
+	}
+
+	static float SquaredMagnitude(const Vec3F& V) {
+		return V.X*V.X + V.Y*V.Y;
+	}
+
+	static float Magnitude(const Vec3F& V) {
+		const auto square = SquaredMagnitude(V);
+		return sqrt(square);
 	}
 #pragma endregion
 };
@@ -668,6 +690,24 @@ struct Color {
 		return Color{ Floor(Foreground.A) << 24 | Floor(red) << 16 | Floor(green) << 8 | Floor(blue) };
 	}
 
+	Color operator+(const float Other) const {
+		return {A+Other, R+Other, G+Other, B+Other};
+	}
+
+	Color operator+(const Color& Other) const {
+		return {A+Other.A, R+Other.R, G+Other.G, B+Other.B};
+	}
+
+	Color& operator+=(const float Other) {
+		*this = *this + Other;
+		return  *this;
+	}
+
+	Color& operator+=(const Color& Other) {
+		*this = *this + Other;
+		return  *this;
+	}
+
 	Color operator*(const float Other) const {
 		const auto newR = Clamp(this->R * Other, 0.0f, 255.0f);
 		const auto newG = Clamp(this->G * Other, 0.0f, 255.0f);
@@ -780,12 +820,11 @@ struct Camera {
 		// Rotate the parent object.
 		Vert p0 = P;
 
-		//RenderHelper::VertexShader(p0, PTransform, C);
-
+		// Get the depth and screen space position.
 		Perspective(p0, PTransform, C);
 
 		Vec2F ret = { p0.Pos.X, p0.Pos.Y };
-		ret.Z = p0.Pos.W;
+		ret.Z = p0.Pos.W; // store the depth into the 2d vector.
 
 		return ret;
 	}
